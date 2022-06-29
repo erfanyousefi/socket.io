@@ -1,15 +1,19 @@
 const http = require("http");
-const server = http.createServer();
+const express = require("express");
+const app = express();
+app.use(express.static("./"))
+const server = http.createServer(app);
 const socketIO = require("socket.io")
 const io = socketIO(server, {
     cors: {
         origin: '*'
     }
 })
+
 io.on("connection", (socket) => {
-    socket.on("welcome-client", (data) => {
-        console.log(data);
+    socket.on("clientMessage", data => {
+        io.emit("serverMessage", data)
     })
-    socket.emit("welcome-server", "hello client i'm backend developer")
 })
+
 server.listen(3000, () => console.log("run on port 3000"))
